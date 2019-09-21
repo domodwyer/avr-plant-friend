@@ -1,0 +1,5 @@
+target remote :1234
+watch WDTCR
+display WDT_THIS_SLEEP_SECONDS
+display /tb WDTCR
+c
