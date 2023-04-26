@@ -1,8 +1,8 @@
 #include "watchdog.h"
 #include "../pins.h"
 #include "../wdt.h"
-#include <avr/delay.h>
 #include <avr/eeprom.h>
+#include <util/delay.h>
 
 /// Specify the default pump value if not previously set by the user.
 uint16_t EEMEM PUMP_ON_DURATION_SECONDS = 5;
@@ -14,6 +14,17 @@ void init_overflow_sensor() {
 
   // Enable the pull-up for the button pin
   PORTB |= (1 << OVERFLOW_SIGNAL_PIN_1);
+}
+
+/// @brief Pulse the PUMP_PIN_1 3 times in quick succession, flashing the pump
+/// LED.
+void triple_flash() {
+  for (uint8_t i = 3; i > 0; i--) {
+    PORTB |= (1 << PUMP_PIN_1);
+    _delay_ms(100);
+    PORTB &= ~(1 << PUMP_PIN_1);
+    _delay_ms(100);
+  }
 }
 
 void handle_event_watchdog() {
@@ -32,7 +43,7 @@ void handle_event_watchdog() {
   // If the code reaches this point, the pump was off, and this wakeup is the
   // start of the watering routine.
   //
-  // * First check if the water overflow signal is high, if so, skip this
+  // * First check if the water overflow signal is low, if so, skip this
   //   watering and sleep until the next watering time.
   // * Turn the pump on.
   // * Sleep for the configured pump time, before waking and taking the branch
@@ -50,13 +61,4 @@ void handle_event_watchdog() {
 
   // And sleep for the configured pump-on duration
   wdt_sleep_seconds(eeprom_read_word(&PUMP_ON_DURATION_SECONDS));
-}
-
-void triple_flash() {
-  for (uint8_t i = 3; i--; i != 0) {
-    PORTB |= (1 << PUMP_PIN);
-    _delay_ms(100);
-    PORTB &= ~(1 << PUMP_PIN);
-    _delay_ms(100);
-  }
 }
