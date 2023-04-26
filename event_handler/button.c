@@ -77,7 +77,7 @@ static void debounce() {
     switch (accumulator) {
     case BUTTON_UP: {
       // Always ensure the pump is now turned off.
-      PORTB &= ~(1 << PUMP_PIN);
+      PORTB &= ~(1 << PUMP_PIN_1);
 
       // If the button debounce state never passed through the "on" state, then
       // simply return - the button was never "truly" pressed.
@@ -119,7 +119,7 @@ static void debounce() {
       // If more than one second, start the training routine by turning on the
       // pump.
       if (TIMER_TICKS >= ONE_SECOND_TICKS) {
-        PORTB |= (1 << PUMP_PIN);
+        PORTB |= (1 << PUMP_PIN_1);
       }
 
       continue;
@@ -132,7 +132,7 @@ static void debounce() {
 
 void handle_event_button() {
   // First always stop the pump, if running.
-  PORTB &= ~(1 << PUMP_PIN);
+  PORTB &= ~(1 << PUMP_PIN_1);
 
   // NOTE: If a pin-change interrupt occurred before this event handler disabled
   // the pin change interrupts, or a WDT interrupt and set the WDT event flag
