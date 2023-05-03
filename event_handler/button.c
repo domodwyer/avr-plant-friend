@@ -131,8 +131,9 @@ static void debounce() {
 }
 
 void handle_event_button() {
-  // First always stop the pump, if running.
+  // First always stop the pumps, if running.
   PORTB &= ~(1 << PUMP_PIN_1);
+  PORTB &= ~(1 << PUMP_PIN_2);
 
   // NOTE: If a pin-change interrupt occurred before this event handler disabled
   // the pin change interrupts, or a WDT interrupt and set the WDT event flag
