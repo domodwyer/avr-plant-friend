@@ -38,13 +38,18 @@ static void event_flag_clear(uint8_t flag) {
 }
 
 void event_loop_tick() {
-  // Priority is always given to the training pin
+  // Priority is always given to the training pin.
+  //
+  // This flag is set if the pin change interrupt for the button has been fired.
   if (event_flag_is_set(EVENT_STATE_BUTTON)) {
     handle_event_button();
     event_flag_clear(EVENT_STATE_BUTTON);
   }
 
-  // If the pin is in being actively pressed, process watchdog timer events.
+  // If the button is not being actively pressed, process watchdog timer events.
+  //
+  // This flag is set if the user-set timeout (driven by the watchdog timer) has
+  // elapsed.
   if (event_flag_is_set(EVENT_STATE_WDT)) {
     handle_event_watchdog();
     event_flag_clear(EVENT_STATE_WDT);
