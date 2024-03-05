@@ -17,6 +17,14 @@ enum PumpRoutineState {
   Pump2_Off = 1 << 2
 };
 
+_Static_assert(Pump1_On == 0);
+_Static_assert(Pump1_On != Pump1_Off);
+_Static_assert(Pump1_On != Pump2_On);
+_Static_assert(Pump1_On != Pump2_Off);
+_Static_assert(Pump1_Off != Pump2_Off);
+_Static_assert(Pump1_Off != Pump2_On);
+_Static_assert(Pump2_On != Pump2_Off);
+
 /// @brief Configure OVERFLOW_SIGNAL_PIN_1 as an input with pull ups.
 void init_overflow_sensor() {
   // Set the button pin to input
@@ -111,7 +119,6 @@ void handle_event_watchdog() {
   // If both pumps were inadvertently enabled prior to this function being
   // called, the NEXT_STEP state is now invalid, and the default handler will be
   // invoked to disable the pumps and halt execution.
-  _Static_assert(Pump1_On == 0);
 
   switch (NEXT_STEP) {
   case Pump1_On:
